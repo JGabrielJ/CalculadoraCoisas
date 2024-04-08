@@ -1,5 +1,5 @@
 import tkinter as tk
-from modules.calculator import Calculator
+from thing.calculator import Calculator
 
 
 if __name__ == '__main__':

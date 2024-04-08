@@ -1,5 +1,5 @@
 import tkinter as tk
-from modules import icon_path
+from thing import icon_path
 
 
 class Interface:
@@ -7,4 +7,5 @@ class Interface:
         self.window = window
         self.window.title('Calculadora de Coisas')
         self.window.iconbitmap(icon_path)
+        self.window.resizable(False, False)
         self.window.config(background='#FFFFFF')
