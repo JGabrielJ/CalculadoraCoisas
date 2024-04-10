@@ -14,7 +14,7 @@ class Calculator(Interface):
         self.display = tk.Label(window, text='0', width=21, anchor='e', font=('System', 36), background='#C3EBEB')
         self.display.grid(row=1, column=0, columnspan=5, padx=8)
 
-        buttons: list[tuple] = [
+        buttons: list[tuple[str, int]] = [
             ('C', 2, 0), ('sin()', 2, 1), ('cos()', 2, 2), ('tan()', 2, 3), ('⌫', 2, 4),
             ('π', 3, 0), ('(', 3, 1), (')', 3, 2), ('%', 3, 3), ('/', 3, 4),
             ('√', 4, 0), ('7', 4, 1), ('8', 4, 2), ('9', 4, 3), ('*', 4, 4),
@@ -67,7 +67,7 @@ class Calculator(Interface):
         final_result: int | float | str
 
         try:
-            parc_result = eval(self.equation)
+            parc_result = eval(self.equation.replace('^', '**'))
         except SyntaxError:
             parc_result = 'Error'
 
@@ -120,11 +120,11 @@ class Calculator(Interface):
         result: float = 0
         values = self.__format_perc()
 
-        num = float(values[0])
+        num: float = float(values[0])
         if len(values) > 1:
-            dif = float(values[1])
-            opr = values[2]
-            inc = (num * dif / 100)
+            dif: float = float(values[1])
+            opr: str = values[2]
+            inc: float = (num * dif / 100)
 
             match opr:
                 case '+':
@@ -143,7 +143,7 @@ class Calculator(Interface):
     def __format_perc(self) -> list[str]:
         v: list[str] = ['0']
         o: list[str] | str = ['+', '-', '*', '/']
-        self.equation = self.equation.replace('(', '').replace(')', '')
+        self.equation = self.equation.replace('(', '').replace(')', '').replace('^', '**')
 
         for t in self.equation:
             if t in o:
