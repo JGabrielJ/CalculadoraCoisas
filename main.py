@@ -3,6 +3,6 @@ from thing.calculator import Calculator
 
 
 if __name__ == '__main__':
-    wind = tk.Tk()
-    calc = Calculator(wind)
-    wind.mainloop()
+    window = tk.Tk()
+    calc = Calculator(window)
+    window.mainloop()
