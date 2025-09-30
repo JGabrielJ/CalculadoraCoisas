@@ -1,2 +1,4 @@
+import os
+
 # Definição de variáveis e funções
-ICON_PATH: str = 'C:/Users/gjaci/OneDrive/Documentos/Projetos/CalculadoraCoisas/files/icon.ico'
+ICON_PATH: str = os.path.abspath('./files/icon.ico')

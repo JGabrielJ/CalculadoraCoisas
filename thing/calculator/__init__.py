@@ -8,8 +8,9 @@ class Calculator(Interface):
         super().__init__(window)
         self.equation: str = '0'
 
-        self.title = tk.Label(window, text='Calculadora', font=('Bahnschrift', 18), background='#FFFFFF')
-        self.title.grid(row=0, column=0, columnspan=5, pady=8)
+        self.switch = tk.Button(window, text='Calculadora ⇄ Conversor', font=('Bahnschrift', 18), relief='flat',
+                              background='#FFFFFF', command=lambda: self.__open_converter())
+        self.switch.grid(row=0, column=0, columnspan=5, pady=8)
 
         self.display = tk.Label(window, text='0', width=21, anchor='e', font=('System', 36), background='#C3EBEB')
         self.display.grid(row=1, column=0, columnspan=5, padx=8)
@@ -172,3 +173,12 @@ class Calculator(Interface):
 
     def __update_display(self) -> None:
         self.display['text'] = self.equation
+
+
+    def __open_converter(self) -> None:
+        self.WINDOW.destroy()
+        from thing.converter import Converter
+
+        conv_window = tk.Tk()
+        Converter(conv_window)
+        conv_window.mainloop()

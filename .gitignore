@@ -1,4 +1,3 @@
-.venv/
-ajudas/
-.vscode/
-conversor/
+test.py
+__pycache__/
+*.pyc
