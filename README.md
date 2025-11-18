@@ -1,0 +1,2 @@
+# Calculadora de Coisas
+Uma calculadora científica com interface gráfica feita em Python através da biblioteca Tkinter. A calculadora conta com funções básicas, como soma, subtração, multiplicação e divisão, assim como funções mais avançadas, como trigonometria, notação científica, fatorial, dentre outras. A aplicação também conta com um conversor de medidas (em andamento) e uma calculadora de datas (a fazer).
