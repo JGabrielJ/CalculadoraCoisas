@@ -1,7 +1,7 @@
 import pygame
-from thing import *
 import tkinter as tk
 from typing import Any
+from thing import BONK_FILE, CONVERSION_OPTIONS, convert
 
 
 class Converter(tk.Frame):
@@ -15,12 +15,20 @@ class Converter(tk.Frame):
         super().__init__(parent, bg='#FFFFFF')
 
         # Mixer de Áudio do PyGame
-        pygame.mixer.init()
+        try:
+            pygame.mixer.init()
+            print('Mixer de áudio inicializado com sucesso.')
+        except pygame.error as e:
+            print(f'Dispositivo de áudio não encontrado. O som será desativado. Erro: {e}')
+            self.play_sound = False
+        else:
+            self.play_sound = True
 
         # Configuração do Grid
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=1)
+        for c in range(3):
+            self.grid_columnconfigure(c, weight=1)
+        for r in range(11):
+            self.grid_rowconfigure(r, weight=1)
 
         # Variáveis de Estado
         self.max_digits: int = 16
@@ -31,7 +39,7 @@ class Converter(tk.Frame):
         self.option_var = tk.StringVar(value='Contagem')
 
         # Título do Frame (Conversor)
-        title_label = tk.Label(self, text="Conversor de Coisas", font=('Bahnschrift', 24, 'bold'), bg='#FFFFFF')
+        title_label = tk.Label(self, text='Conversor de Coisas', font=('Bahnschrift', 24, 'bold'), bg='#FFFFFF')
         title_label.grid(row=0, column=0, columnspan=3, sticky='nsew', pady=(10, 15))
 
         # Menu de Seleção da Categoria de Conversão
@@ -44,7 +52,7 @@ class Converter(tk.Frame):
                                     font=('Cambria_Math', 32), bg='#FFFFFF')
         self.input_value.grid(row=2, column=0, columnspan=3, padx=8, sticky='nsw')
 
-        self.input_title = tk.Label(self, text='De:', font=('Bahnschrift', 12), bg='#FFFFFF')
+        self.input_title = tk.Label(self, text='De:', font=('Bahnschrift', 12, 'bold'), bg='#FFFFFF')
         self.input_title.grid(row=3, column=0, padx=8, sticky='nsew')
 
         self.input_menu = tk.OptionMenu(self, self.input_unit_var, '')
@@ -56,7 +64,7 @@ class Converter(tk.Frame):
                                      font=('Cambria_Math', 32), bg='#FFFFFF')
         self.output_value.grid(row=4, column=0, columnspan=3, padx=8, sticky='nsw')
 
-        self.output_title = tk.Label(self, text='Para:', font=('Bahnschrift', 12), bg='#FFFFFF')
+        self.output_title = tk.Label(self, text='Para:', font=('Bahnschrift', 12, 'bold'), bg='#FFFFFF')
         self.output_title.grid(row=5, column=0, padx=8, pady=(0, 20), sticky='nsew')
 
         self.output_menu = tk.OptionMenu(self, self.output_unit_var, '')
@@ -72,7 +80,7 @@ class Converter(tk.Frame):
             ('7', 7, 0), ('8', 7, 1), ('9', 7, 2),
             ('4', 8, 0), ('5', 8, 1), ('6', 8, 2),
             ('1', 9, 0), ('2', 9, 1), ('3', 9, 2),
-            ('⌫', 10, 0), ('0', 10, 1), ('.', 10, 2)
+            ('⌫', 10, 0), ('0', 10, 1), (',', 10, 2)
         ]
 
         for (text, row, column) in buttons:
@@ -82,7 +90,7 @@ class Converter(tk.Frame):
             else:
                 button = tk.Button(self, text=text, font='Terminal', width=12, height=2, bg='#FFFFFF',
                                    relief='flat', borderwidth=3, command=lambda t=text: self.__button_click(t))
-            button.grid(row=row, column=column, pady=5)
+            button.grid(row=row, column=column, padx=5, pady=5)
 
     def __change_menu(self) -> None:
         """Atualiza as opções nos menus de unidade com base na categoria escolhida."""
@@ -112,25 +120,65 @@ class Converter(tk.Frame):
         Args:
             button (str): O caractere do botão pressionado.
         """
+        if button == ',': button = '.'
+
         if button == '✓':
             result = convert(
                 category=self.option_var.get(),
-                from_unit=self.input_unit_var.get(),
                 to_unit=self.output_unit_var.get(),
-                value=float(self.input_value_var.get())
-            ); self.output_value_var.set(result)
+                from_unit=self.input_unit_var.get(),
+                value=float(self.__unformat_number(self.input_value_var.get()))
+            )
+
+            # Limita o resultado ao número máximo de dígitos
+            if len(result) > self.max_digits:
+                result = result[:self.max_digits]
+            self.output_value_var.set(result)
         elif button == 'C':
             self.__clear()
         elif button == '⌫':
             self.__delete()
         elif not button:
             try:
-                pygame.mixer.music.load(BONK_FILE)
-                pygame.mixer.music.play()
+                if self.play_sound:
+                    pygame.mixer.music.load(BONK_FILE)
+                    pygame.mixer.music.play()
             except pygame.error as e:
                 print(f"Erro ao tocar o som: {e}")
-        else:
+        elif button:
             self.__append_digit(button)
+
+    def __format_number(self, number_str: str) -> str:
+        """Formata uma string numérica para o padrão brasileiro.
+        
+        Args:
+            number_str (str): A string numérica a ser formatada.
+
+        Returns:
+            str: A string formatada.
+        """
+        if 'e' in number_str.lower() or number_str in ("Erro", "N/A"):
+            return number_str.replace('.', ',')
+
+        parts = number_str.split('.'); integer_part = parts[0]
+        decimal_part = parts[1] if len(parts) > 1 else None
+
+        integer_part_formatted = f'{int(integer_part):,}'.replace(',', '.')
+
+        if decimal_part is not None:
+            return f'{integer_part_formatted},{decimal_part}'
+        return integer_part_formatted
+
+    def __unformat_number(self, formatted_str: str) -> str:
+        """Converte uma string no padrão brasileiro de volta para o padrão do Python.
+
+        Args:
+            formatted_str (str): A string formatada.
+
+        Returns:
+            str: A string no padrão do Python.
+        """
+        return formatted_str.replace('.', '').replace(',', '.')
 
     def __clear(self) -> None:
         """Reseta o conversor para o estado inicial."""
@@ -138,12 +186,12 @@ class Converter(tk.Frame):
 
     def __delete(self) -> None:
         """Remove o último dígito inserido no input."""
-        current = self.input_value_var.get()
+        current = self.__unformat_number(self.input_value_var.get())
 
         if len(current) == 1:
             self.input_value_var.set('0')
         else:
-            self.input_value_var.set(current[:-1])
+            self.input_value_var.set(self.__format_number(current[:-1]))
 
     def __append_digit(self, number: str) -> None:
         """Adiciona um algarismo no input.
@@ -151,13 +199,13 @@ class Converter(tk.Frame):
         Args:
             number (str): O dígito ou `.` a ser inserido.
         """
-        current = self.input_value_var.get()
+        current = self.__unformat_number(self.input_value_var.get())
 
         # Adiciona um dígito apenas se o limite não foi atingido
         if len(current) < self.max_digits:
             if current == '0' and number != '.':
-                self.input_value_var.set(number)
+                self.input_value_var.set(self.__format_number(number))
             else:
                 # Evita adicionar múltiplos pontos decimais
                 if number == '.' and '.' in current: return
-                self.input_value_var.set(current + number)
+                self.input_value_var.set(self.__format_number(current + number))

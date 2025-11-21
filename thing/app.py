@@ -1,8 +1,11 @@
+import threading
 import tkinter as tk
 from typing import Any
-from thing import ICON_FILE
+from tkinter import PhotoImage
+from thing.datecalc import DateCalc
 from thing.converter import Converter
 from thing.calculator import Calculator
+from thing import ICON_FILE, _fetch_currency_rates
 
 
 class App(tk.Tk):
@@ -12,9 +15,12 @@ class App(tk.Tk):
 
         # Configuração da Janela Principal
         self.title('Calculadora de Coisas')
-        self.iconbitmap(ICON_FILE)
-        self.resizable(False, False)
         self.config(bg='#FFFFFF')
+
+        icon_img = PhotoImage(file=ICON_FILE)
+        self.iconphoto(False, icon_img)
+
+        self.resizable(False, False)
 
         # Layout Principal com Barra Lateral
         self.grid_rowconfigure(0, weight=1)
@@ -26,7 +32,7 @@ class App(tk.Tk):
         sidebar_frame.grid_rowconfigure(4, weight=1)
 
         # Botões de navegação na barra lateral
-        menu_title = tk.Label(sidebar_frame, text='Menu',
+        menu_title = tk.Label(sidebar_frame, text='Menu', bg='#F0F0F0',
                               font=('Bahnschrift', 16, 'bold'))
         menu_title.grid(row=0, column=0, sticky='ew', pady=(5, 5))
 
@@ -39,7 +45,7 @@ class App(tk.Tk):
         conv_button.grid(row=2, column=0, sticky='ew', padx=10, pady=7)
 
         date_button = tk.Button(sidebar_frame, text='Cálculo de Data', font=('Bahnschrift', 12),
-                                command=lambda: self.show_frame(Calculator))
+                                command=lambda: self.show_frame(DateCalc))
         date_button.grid(row=3, column=0, sticky='ew', padx=10, pady=7)
 
         # Container para as telas principais
@@ -52,12 +58,15 @@ class App(tk.Tk):
         self.frames = {}
 
         # Criação e adição de cada frame ao dicionário
-        for F in (Calculator, Converter):
+        for F in (Calculator, Converter, DateCalc):
             frame = F(container, self); self.frames[F] = frame
             frame.grid(row=0, column=0, sticky='nsew')
 
         # Exibição da tela inicial (Calculadora)
         self.show_frame(Calculator); self._center_window()
+
+        # Pré-carrega as cotações de moeda em segundo plano para evitar travamentos
+        threading.Thread(target=_fetch_currency_rates, daemon=True).start()
 
     def show_frame(self, cont: Any) -> None:
         """Mostra a tela (frame) na janela do app.
