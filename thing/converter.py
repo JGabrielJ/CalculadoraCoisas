@@ -1,10 +1,10 @@
-import pygame
 import tkinter as tk
 from typing import Any
-from thing import BONK_FILE, CONVERSION_OPTIONS, convert
+from tkinter import ttk
+from thing import CONVERSION_OPTIONS, convert
 
 
-class Converter(tk.Frame):
+class Converter(ttk.Frame):
     def __init__(self, parent: tk.Widget, controller: Any) -> None:
         """Inicializa o frame do conversor de medidas.
 
@@ -12,17 +12,7 @@ class Converter(tk.Frame):
             parent (tk.Widget): O container da classe App.
             controller (App): A instância principal da aplicação.
         """
-        super().__init__(parent, bg='#FFFFFF')
-
-        # Mixer de Áudio do PyGame
-        try:
-            pygame.mixer.init()
-            print('Mixer de áudio inicializado com sucesso.')
-        except pygame.error as e:
-            print(f'Dispositivo de áudio não encontrado. O som será desativado. Erro: {e}')
-            self.play_sound = False
-        else:
-            self.play_sound = True
+        super().__init__(parent)
 
         # Configuração do Grid
         for c in range(3):
@@ -38,41 +28,42 @@ class Converter(tk.Frame):
         self.output_value_var = tk.StringVar(value='0')
         self.option_var = tk.StringVar(value='Contagem')
 
-        # Título do Frame (Conversor)
-        title_label = tk.Label(self, text='Conversor de Coisas', font=('Bahnschrift', 24, 'bold'), bg='#FFFFFF')
-        title_label.grid(row=0, column=0, columnspan=3, sticky='nsew', pady=(10, 15))
+        # Configuração das Listas de Seleção
+        self.option_add('*TCombobox*font', ('Consolas', 10))
+        self.option_add('*TCombobox*Listbox.font', ('Consolas', 10))
 
-        # Menu de Seleção da Categoria de Conversão
-        self.category_menu = tk.OptionMenu(self, self.option_var, *CONVERSION_OPTIONS.keys())
-        self.category_menu.config(width=25, font=('Consolas', 10, 'bold'), relief='raised', borderwidth=2)
-        self.category_menu.grid(row=1, column=0, columnspan=3, padx=8, pady=(0, 5))
+        # Título do Frame (Conversor)
+        ttk.Label(self, text='Conversor de Coisas', style='TTL.TLabel', anchor='center')\
+            .grid(row=0, column=0, columnspan=3, sticky='nsew', pady=15)
+
+        self.category_menu = ttk.Combobox(self, textvariable=self.option_var, font=('Consolas', 10),
+                                          values=list(CONVERSION_OPTIONS.keys()), state='readonly')
+        self.category_menu.grid(row=1, column=0, columnspan=3, sticky='nsew', padx=100, pady=(0, 5))
 
         # Labels e Menus de Unidade (Entrada)
-        self.input_value = tk.Label(self, textvariable=self.input_value_var,
-                                    font=('Cambria_Math', 32), bg='#FFFFFF')
-        self.input_value.grid(row=2, column=0, columnspan=3, padx=8, sticky='nsw')
+        ttk.Label(self, textvariable=self.input_value_var, anchor='w', style='NUM.TLabel')\
+            .grid(row=2, column=0, columnspan=3, padx=8, sticky='nsew')
 
-        self.input_title = tk.Label(self, text='De:', font=('Bahnschrift', 12, 'bold'), bg='#FFFFFF')
-        self.input_title.grid(row=3, column=0, padx=8, sticky='nsew')
+        ttk.Label(self, text='De:', anchor='center', style='PRG.TLabel')\
+            .grid(row=3, column=0, padx=8, sticky='nsew')
 
-        self.input_menu = tk.OptionMenu(self, self.input_unit_var, '')
-        self.input_menu.config(font=('Consolas', 10, 'bold'), relief='raised', borderwidth=3)
-        self.input_menu.grid(row=3, column=1, columnspan=2, padx=8, sticky='ew')
+        self.input_menu = ttk.Combobox(self, textvariable=self.input_unit_var,
+                                       font=('Consolas', 10), state='readonly')
+        self.input_menu.grid(row=3, column=1, columnspan=2, padx=8, sticky='nsew')
 
         # Labels e Menus de Unidade (Saída)
-        self.output_value = tk.Label(self, textvariable=self.output_value_var,
-                                     font=('Cambria_Math', 32), bg='#FFFFFF')
-        self.output_value.grid(row=4, column=0, columnspan=3, padx=8, sticky='nsw')
+        ttk.Label(self, textvariable=self.output_value_var, anchor='w', style='NUM.TLabel')\
+            .grid(row=4, column=0, columnspan=3, padx=8, sticky='nsew')
 
-        self.output_title = tk.Label(self, text='Para:', font=('Bahnschrift', 12, 'bold'), bg='#FFFFFF')
-        self.output_title.grid(row=5, column=0, padx=8, pady=(0, 20), sticky='nsew')
+        ttk.Label(self, text='Para:', anchor='center', style='PRG.TLabel')\
+            .grid(row=5, column=0, padx=8, pady=(0, 20), sticky='nsew')
 
-        self.output_menu = tk.OptionMenu(self, self.output_unit_var, '')
-        self.output_menu.config(font=('Consolas', 10, 'bold'), relief='raised', borderwidth=3)
-        self.output_menu.grid(row=5, column=1, columnspan=2, padx=8, pady=(0, 20), sticky='ew')
+        self.output_menu = ttk.Combobox(self, textvariable=self.output_unit_var,
+                                        font=('Consolas', 10), state='readonly')
+        self.output_menu.grid(row=5, column=1, columnspan=2, padx=8, pady=(0, 20), sticky='nsew')
 
         # Inicialização dos Menus de Unidade
-        self.__change_menu(); self.option_var.trace_add('write', lambda *args: self.__change_menu())
+        self.__change_menu(); self.category_menu.bind('<<ComboboxSelected>>', self.__change_menu)
 
         # Lista de Botões do Conversor
         buttons: list[tuple] = [
@@ -85,14 +76,12 @@ class Converter(tk.Frame):
 
         for (text, row, column) in buttons:
             if text:
-                button = tk.Button(self, text=text, font='Terminal', width=12, height=2, relief='raised',
-                                   borderwidth=3, command=lambda t=text: self.__button_click(t))
+                button = ttk.Button(self, text=text, style='CDC.TButton', command=lambda t=text: self.__button_click(t))
             else:
-                button = tk.Button(self, text=text, font='Terminal', width=12, height=2, bg='#FFFFFF',
-                                   relief='flat', borderwidth=3, command=lambda t=text: self.__button_click(t))
-            button.grid(row=row, column=column, padx=5, pady=5)
+                button = ttk.Button(self, text=text, style='EGG.TButton', command=lambda t=text: self.__button_click(t))
+            button.grid(row=row, column=column, padx=5, pady=5, sticky='nsew')
 
-    def __change_menu(self) -> None:
+    def __change_menu(self, event=None) -> None:
         """Atualiza as opções nos menus de unidade com base na categoria escolhida."""
 
         # Reseta os valores ao trocar de categoria
@@ -102,17 +91,14 @@ class Converter(tk.Frame):
         category = self.option_var.get()
         options = CONVERSION_OPTIONS.get(category, ())
 
-        # Limpa os menus de unidade antes de atualizá-los
-        self.input_menu['menu'].delete(0, 'end')
-        self.output_menu['menu'].delete(0, 'end')
+        # Atualiza os valores dos Comboboxes
+        self.input_menu['values'] = options
+        self.output_menu['values'] = options
 
+        # Define a primeira opção da lista como o valor padrão
         if options:
-            for option in options:
-                self.input_menu['menu'].add_command(label=option, command=tk._setit(self.input_unit_var, option))
-                self.output_menu['menu'].add_command(label=option, command=tk._setit(self.output_unit_var, option))
-
-            # Define a primeira opção da lista como o valor padrão
-            self.input_unit_var.set(options[0]); self.output_unit_var.set(options[0])
+            self.input_unit_var.set(options[0])
+            self.output_unit_var.set(options[0])
 
     def __button_click(self, button: str) -> None:
         """Define as ações de cada botão do conversor.
@@ -123,11 +109,16 @@ class Converter(tk.Frame):
         if button == ',': button = '.'
 
         if button == '✓':
+            input_val = self.input_value_var.get()
+
+            if input_val == '∞':
+                self.output_value_var.set('∞'); return
+
             result = convert(
                 category=self.option_var.get(),
                 to_unit=self.output_unit_var.get(),
                 from_unit=self.input_unit_var.get(),
-                value=float(self.__unformat_number(self.input_value_var.get()))
+                value=float(self.__unformat_number(input_val))
             )
 
             # Limita o resultado ao número máximo de dígitos
@@ -139,12 +130,7 @@ class Converter(tk.Frame):
         elif button == '⌫':
             self.__delete()
         elif not button:
-            try:
-                if self.play_sound:
-                    pygame.mixer.music.load(BONK_FILE)
-                    pygame.mixer.music.play()
-            except pygame.error as e:
-                print(f"Erro ao tocar o som: {e}")
+            self.input_value_var.set('∞')
         elif button:
             self.__append_digit(button)
 

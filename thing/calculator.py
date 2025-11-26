@@ -1,9 +1,10 @@
 import math, re
 import tkinter as tk
 from typing import Any
+from tkinter import ttk
 
 
-class Calculator(tk.Frame):
+class Calculator(ttk.Frame):
     def __init__(self, parent: tk.Widget, controller: Any) -> None:
         """Inicializa o frame da calculadora principal.
 
@@ -11,7 +12,7 @@ class Calculator(tk.Frame):
             parent (tk.Widget): O container da classe App.
             controller (App): A instância principal da aplicação.
         """
-        super().__init__(parent, bg='#FFFFFF')
+        super().__init__(parent)
 
         # Configuração do Grid
         for c in range(5):
@@ -25,13 +26,12 @@ class Calculator(tk.Frame):
         self.equation_var = tk.StringVar(value='0')
 
         # Título do Frame (Calculadora)
-        title_label = tk.Label(self, text='Calculadora de Coisas', font=('Bahnschrift', 24, 'bold'), bg='#FFFFFF')
-        title_label.grid(row=0, column=0, columnspan=5, sticky='nsew', pady=(10, 15))
+        ttk.Label(self, text='Calculadora de Coisas', style='TTL.TLabel', anchor='center')\
+            .grid(row=0, column=0, columnspan=5, sticky='nsew', pady=15)
 
         # Display das Equações e Resultados
-        self.display = tk.Label(self, textvariable=self.equation_var, anchor='e',
-                                font=('Cambria_Math', 32), bg='#C3EBEB')
-        self.display.grid(row=1, column=0, columnspan=5, sticky='nsew', padx=8, pady=(0, 15))
+        ttk.Label(self, textvariable=self.equation_var, anchor='e', style='NUM.TLabel', background='#C3EBEB')\
+            .grid(row=1, column=0, columnspan=5, sticky='nsew', padx=8, pady=(0, 15))
 
         # Lista de Botões da Calculadora
         buttons: list[tuple] = [
@@ -44,9 +44,8 @@ class Calculator(tk.Frame):
         ]
 
         for (text, row, column) in buttons:
-            button = tk.Button(self, text=text, font='Terminal', width=6, height=3, relief='raised',
-                               borderwidth=3, command=lambda t=text: self.__button_click(t))
-            button.grid(row=row, column=column, pady=5)
+            ttk.Button(self, text=text, style='CDC.TButton', command=lambda t=text: self.__button_click(t))\
+                .grid(row=row, column=column, pady=5, padx=5, sticky='nsew')
 
     def __button_click(self, value: str) -> None:
         """Define as ações de cada botão da calculadora.
@@ -114,7 +113,7 @@ class Calculator(tk.Frame):
         if self.is_result or len(current) == 1:
             self.equation_var.set('0')
         else:
-            self.equation_var.set(self.__format_number(current[:-1]))
+            self.__reformat_display(current[:-1])
 
         self.is_result = False
 
@@ -235,6 +234,24 @@ class Calculator(tk.Frame):
         scien_value = f'{value:.2e}'; mantissa, exponent = scien_value.split('e')
         self.equation_var.set(f'{mantissa.replace('.', ',')}×10^{int(exponent)}')
 
+    def __reformat_display(self, equation: str) -> None:
+        """Divide a equação em números e operadores, formata os números
+        individualmente e junta tudo de volta para exibir no visor.
+
+        Args:
+            equation (str): A equação não formatada.
+        """
+        # Divide a expressão em partes e remove strings vazias
+        parts = re.split(r"([+\-×÷^()π])", equation)
+        parts = [p for p in parts if p]
+
+        for i, part in enumerate(parts):
+            # Se a parte for um número, ela é formatada
+            if part and part not in ['+', '-', '×', '÷', '^', '(', ')', 'π']:
+                parts[i] = self.__format_number(part)
+
+        self.equation_var.set(''.join(parts))
+
     def __update_display(self, val: str) -> None:
         """Adiciona dígitos ao mostrador ou reseta se for o resultado final.
 
@@ -265,13 +282,5 @@ class Calculator(tk.Frame):
         else:
             current_equation += val
 
-        # Reformata a expressão, formatando cada parte que não seja um operador ou símbolo
-        new_parts = re.split(r"([+\-×÷^()π])", current_equation)
-        new_parts = [p for p in new_parts if p] # Remove strings vazias
-
-        for i, part in enumerate(new_parts):
-            # Se a parte não for um operador ou símbolo e não estiver vazia, formata como número
-            if part and part not in ['+', '-', '×', '÷', '^', '(', ')', 'π']:
-                new_parts[i] = self.__format_number(part)
-
-        self.equation_var.set(''.join(new_parts))
+        # Re-formata a equação inteira para exibição
+        self.__reformat_display(current_equation)

@@ -5,8 +5,7 @@ from datetime import timedelta
 
 # Arquivos do App
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BONK_FILE = os.path.join(APP_DIR, 'files', 'bonk.mp3')
-ICON_FILE = os.path.join(APP_DIR, 'files', 'icon.png')
+ICON_FILE = os.path.join(APP_DIR, 'images', 'favicon.png')
 
 # Opções do Menu de Conversão
 CONVERSION_OPTIONS = {
