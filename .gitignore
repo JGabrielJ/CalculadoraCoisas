@@ -3,6 +3,7 @@
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
+.pyc
 __pycache__/
 *.py[cod]
 *$py.class
@@ -30,6 +31,12 @@ share/python-wheels/
 *.egg
 MANIFEST
 requirements.in
+
+# Nuitka build files
+main.build/
+main.dist/
+main.onefile-build/
+main.bin
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

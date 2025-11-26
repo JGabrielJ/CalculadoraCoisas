@@ -13,19 +13,19 @@
 ![GitHub watchers](https://img.shields.io/github/watchers/JGabrielJ/CalculadoraCoisas?style=plastic)
 ![GitHub top language](https://img.shields.io/github/languages/top/JGabrielJ/CalculadoraCoisas?style=plastic&labelColor=blue&color=yellow)
 
-<table border="0">
+<table border="0" cellspacing="0" cellpadding="0">
     <tr>
         <td align="center">
             <h3> Calculadora Avançada </h3>
-            <img src="./images/calculator.gif" alt="Demonstração da Calculadora" width="400">
+            <img src="./images/calculator.gif" alt="Demonstração da Calculadora" width="250">
         </td>
         <td align="center">
             <h3> Conversor de Medidas </h3>
-            <img src="./images/converter.gif" alt="Demonstração do Conversor" width="400">
+            <img src="./images/converter.gif" alt="Demonstração do Conversor" width="250">
         </td>
         <td align="center">
             <h3> Calculadora de Datas </h3>
-            <img src="./images/datecalc.gif" alt="Demonstração de Datas" width="400">
+            <img src="./images/datecalc.gif" alt="Demonstração de Datas" width="250">
         </td>
     </tr>
 </table>
