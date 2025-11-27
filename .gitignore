@@ -37,6 +37,7 @@ main.build/
 main.dist/
 main.onefile-build/
 main.bin
+main.exe
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
