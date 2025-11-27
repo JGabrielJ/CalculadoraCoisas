@@ -1,9 +1,10 @@
 # Calculadora de Coisas
 
 ![GitHub License](https://img.shields.io/github/license/JGabrielJ/CalculadoraCoisas?style=plastic&labelColor=brown&color=darkblue)
+![GitHub Created At](https://img.shields.io/github/created-at/JGabrielJ/CalculadoraCoisas?style=plastic)
 ![GitHub last commit](https://img.shields.io/github/last-commit/JGabrielJ/CalculadoraCoisas?display_timestamp=committer&style=plastic)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/JGabrielJ/CalculadoraCoisas?style=plastic)
-![GitHub Release](https://img.shields.io/github/v/release/JGabrielJ/CalculadoraCoisas?sort=date&display_name=release&style=plastic) <br>
+![GitHub Release](https://img.shields.io/github/v/release/JGabrielJ/CalculadoraCoisas?sort=date&display_name=release&style=plastic)
 ![GitHub Release Date](https://img.shields.io/github/release-date/JGabrielJ/CalculadoraCoisas?display_date=published_at&style=plastic)
 ![GitHub repo size](https://img.shields.io/github/repo-size/JGabrielJ/CalculadoraCoisas?style=plastic)
 ![GitHub forks](https://img.shields.io/github/forks/JGabrielJ/CalculadoraCoisas?style=plastic)
