@@ -13,8 +13,8 @@ class App(tk.Tk):
         super().__init__(*args, **kwargs)
 
         # Configuração da Janela Principal
-        self.title('Calculadora de Coisas')
-        self.config(background='#FFFFFF')
+        self.title("Calculadora de Coisas")
+        self.config(background="#FFFFFF")
 
         icon_img = PhotoImage(file=ICON_FILE)
         self.iconphoto(False, icon_img)
@@ -24,32 +24,43 @@ class App(tk.Tk):
         self.grid_columnconfigure(1, weight=1)
 
         # Configuração de Estilos do App (Notebook)
-        style = ttk.Style(); style.theme_use('clam')
+        style = ttk.Style()
+        style.theme_use("clam")
 
-        style.configure('CDC.TNotebook', background='#FFFFFF')
-        style.configure('CDC.TNotebook.Tab', font=('Bahnschrift', 10), background='#D9D9D9')
+        style.configure("CDC.TNotebook", background="#FFFFFF")
+        style.configure(
+            "CDC.TNotebook.Tab", font=("Bahnschrift", 10), background="#D9D9D9"
+        )
 
-        style.map('CDC.TNotebook.Tab',
+        style.map(
+            "CDC.TNotebook.Tab",
             background=[
-                ('selected', '#D9D9D9'),
-                ('active', '!selected', '#C0C0C0'),
-                ('!disabled', '!selected', '#E0E0E0'),
+                ("selected", "#D9D9D9"),
+                ("active", "!selected", "#C0C0C0"),
+                ("!disabled", "!selected", "#E0E0E0"),
             ],
         )
 
         # Configuração dos Botões
-        style.configure('CDC.TButton', font=('Helvetica', 10, 'bold'), focuscolor='none')
-        style.configure('EGG.TButton', relief='flat', focuscolor='none', font=('Helvetica', 10, 'bold'))
-        style.configure('CDC.TRadiobutton', font=('Helvetica', 10), focuscolor='none')
+        style.configure(
+            "CDC.TButton", font=("Helvetica", 10, "bold"), focuscolor="none"
+        )
+        style.configure(
+            "EGG.TButton",
+            relief="flat",
+            focuscolor="none",
+            font=("Helvetica", 10, "bold"),
+        )
+        style.configure("CDC.TRadiobutton", font=("Helvetica", 10), focuscolor="none")
 
         # Configuração dos Labels
-        style.configure('PRG.TLabel', font=('Bahnschrift', 12))
-        style.configure('TTL.TLabel', font=('Bahnschrift', 24, 'bold'))
-        style.configure('NUM.TLabel', font=('Cambria_Math', 32))
+        style.configure("PRG.TLabel", font=("Bahnschrift", 12))
+        style.configure("TTL.TLabel", font=("Bahnschrift", 24, "bold"))
+        style.configure("NUM.TLabel", font=("Cambria_Math", 32))
 
         # Criação do Notebook (abas)
-        notebook = ttk.Notebook(self, style='CDC.TNotebook')
-        notebook.grid(row=0, column=0, columnspan=2, sticky='nsew', padx=10, pady=10)
+        notebook = ttk.Notebook(self, style="CDC.TNotebook")
+        notebook.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
 
         # Criação dos frames para cada aba
         calculator_frame = Calculator(notebook, self)
@@ -57,9 +68,9 @@ class App(tk.Tk):
         datecalc_frame = DateCalc(notebook, self)
 
         # Adiciona os frames como abas no Notebook
-        notebook.add(calculator_frame, text='Calculadora')
-        notebook.add(converter_frame, text='Conversor')
-        notebook.add(datecalc_frame, text='Cálculo de Data')
+        notebook.add(calculator_frame, text="Calculadora")
+        notebook.add(converter_frame, text="Conversor")
+        notebook.add(datecalc_frame, text="Cálculo de Data")
 
         # Centraliza a janela no meio da tela
         self.update_idletasks()
@@ -70,7 +81,7 @@ class App(tk.Tk):
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
 
-        self.geometry(f'{width}x{height}+{x}+{y}')
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
         # Pré-carrega as cotações de moeda em segundo plano para evitar travamentos
         threading.Thread(target=_fetch_currency_rates, daemon=True).start()

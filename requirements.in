@@ -1,0 +1,5 @@
+python-dateutil
+requests
+tkcalendar
+
+# LOCAL: nuitka, pip-tools

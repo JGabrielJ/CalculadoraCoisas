@@ -1,19 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Encerra o script se qualquer comando falhar
 set -e
+
+PYTHON=python3
+if ! command -v "$PYTHON" >/dev/null 2>&1; then
+  echo "Python 3 não foi encontrado. Instale o Python 3 e tente novamente."
+  exit 1
+fi
 
 echo "Verificando o ambiente Python..."
 
-# Verifica se há um ambiente virtual .venv e cria um caso não exista
 if [ ! -d ".venv" ]; then
-    echo "Criando ambiente virtual..."
-    python3 -m venv .venv
+  echo "Criando ambiente virtual..."
+  "$PYTHON" -m venv .venv
 fi
 
-echo "Ativando ambiente virtual e instalando dependencias..."
+echo "Ativando ambiente virtual e instalando dependências..."
 source .venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 
 echo "Iniciando o aplicativo..."
-python3 main.py
+python main.py
