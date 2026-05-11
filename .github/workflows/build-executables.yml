@@ -32,7 +32,7 @@ jobs:
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install nuitka==1.8.4 ordered-set zstandard
+          pip install nuitka==4.1 ordered-set zstandard
 
       - name: Install runtime dependencies
         run: |
@@ -64,11 +64,9 @@ jobs:
             --product-name="Calculadora de Coisas" \
             --product-version=1.1 \
             --file-description="Retro multifunctional calculator with a simple and intuitive interface" \
-            --follow-imports \
             --output-filename=ThingCalculator_v1.1_linux_x64 \
             --output-dir=dist \
             --remove-output \
-            --lto=yes \
             main.py
 
       - name: Build executable (Windows)
@@ -84,11 +82,9 @@ jobs:
             --product-name="Calculadora de Coisas" ^
             --product-version=1.1 ^
             --file-description="Retro multifunctional calculator with a simple and intuitive interface" ^
-            --follow-imports ^
             --output-filename=ThingCalculator_v1.1_windows_x64 ^
             --output-dir=dist ^
             --remove-output ^
-            --lto=yes ^
             main.py
 
       - name: Build executable (macOS)
@@ -102,11 +98,9 @@ jobs:
             --product-name="Calculadora de Coisas" \
             --product-version=1.1 \
             --file-description="Retro multifunctional calculator with a simple and intuitive interface" \
-            --follow-imports \
             --output-filename=ThingCalculator_v1.1_macos_x64 \
             --output-dir=dist \
             --remove-output \
-            --lto=yes \
             main.py
 
       - name: Upload build artifact
@@ -149,7 +143,7 @@ jobs:
             - Resolução automática de expressões com operadores finais (ex: "1+2+" calcula como "1+2")
             - Correção de bug no conversor que impedia dígitos após "∞"
             - Refatoração e organização do código para Clean Code (funções utilitárias centralizadas em `utils.py`)
-            - Otimizações no workflow de build com LTO e metadados completos
+            - Otimizações no workflow de build com metadados completos
 
             Downloads (não requer Python instalado):
             - Windows: *ThingCalculator_v1.1_windows_x64.exe*
