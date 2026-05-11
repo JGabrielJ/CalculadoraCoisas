@@ -28,6 +28,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Install build dependencies
         run: |
@@ -72,20 +74,7 @@ jobs:
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
         run: |
-          python -m nuitka ^
-            --onefile ^
-            --enable-plugin=tk-inter ^
-            --include-data-files=images\favicon.png=images\ ^
-            --windows-console-mode=disable ^
-            --windows-icon-from-ico=images\favicon.ico ^
-            --company-name=JGabrielJ ^
-            --product-name="Calculadora de Coisas" ^
-            --product-version=1.1 ^
-            --file-description="Retro multifunctional calculator with a simple and intuitive interface" ^
-            --output-filename=ThingCalculator_v1.1_windows_x64 ^
-            --output-dir=dist ^
-            --remove-output ^
-            main.py
+          python -m nuitka --onefile --enable-plugin=tk-inter --include-data-files=images\favicon.png=images\ --windows-console-mode=disable --windows-icon-from-ico=images\favicon.ico --company-name=JGabrielJ --product-name="Calculadora de Coisas" --product-version=1.1 --file-description="Retro multifunctional calculator with a simple and intuitive interface" --output-filename=ThingCalculator_v1.1_windows_x64 --output-dir=dist --remove-output main.py
 
       - name: Build executable (macOS)
         if: runner.os == 'macOS'
