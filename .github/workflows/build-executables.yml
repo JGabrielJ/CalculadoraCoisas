@@ -47,12 +47,26 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential python3-tk
-
+        
       - name: Install Windows build tools
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
         env:
           FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+      - name: Install Dependency Walker
+        if: runner.os == 'Windows'
+        run: choco install dependencywalker -y
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+        shell: powershell
+
+      - name: Set Dependency Walker path
+        if: runner.os == 'Windows'
+        run: |
+          $dependsPath = (Get-Command depends.exe -ErrorAction Stop).Source
+          echo "NUITKA_DEPENDENCY_WALKER_PATH=$dependsPath" >> $GITHUB_ENV
+        shell: powershell
 
       - name: Install macOS build tools
         if: runner.os == 'macOS'
@@ -77,11 +91,8 @@ jobs:
 
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
-        continue-on-error: true
         run: |
           python -m nuitka --onefile --enable-plugin=tk-inter --include-data-files=images\favicon.png=images\ --windows-console-mode=disable --windows-icon-from-ico=images\favicon.ico --company-name=JGabrielJ --product-name="Calculadora de Coisas" --product-version=1.1 --file-description="Retro multifunctional calculator with a simple and intuitive interface" --output-filename=ThingCalculator_v1.1_windows_x64 --output-dir=dist --remove-output --assume-yes-for-downloads main.py
-        env:
-          NUITKA_ASSUME_YES_FOR_DOWNLOADS: 1
 
       - name: Build executable (macOS)
         if: runner.os == 'macOS'
@@ -104,11 +115,10 @@ jobs:
         with:
           name: CalculadoraCoisas-${{ runner.os }}
           path: dist/ThingCalculator_v1.1_*
-          if-no-files-found: ignore
           retention-days: 30
         env:
           FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  
+
   release:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
