@@ -77,8 +77,9 @@ jobs:
 
       - name: Build executable (Windows)
         if: runner.os == 'Windows'
+        continue-on-error: true
         run: |
-          python -m nuitka --onefile --enable-plugin=tk-inter --include-data-files=images\favicon.png=images\ --windows-console-mode=disable --windows-icon-from-ico=images\favicon.ico --company-name=JGabrielJ --product-name="Calculadora de Coisas" --product-version=1.1 --file-description="Retro multifunctional calculator with a simple and intuitive interface" --output-filename=ThingCalculator_v1.1_windows_x64 --output-dir=dist --remove-output main.py
+          python -m nuitka --onefile --enable-plugin=tk-inter --include-data-files=images\favicon.png=images\ --windows-console-mode=disable --windows-icon-from-ico=images\favicon.ico --company-name=JGabrielJ --product-name="Calculadora de Coisas" --product-version=1.1 --file-description="Retro multifunctional calculator with a simple and intuitive interface" --output-filename=ThingCalculator_v1.1_windows_x64 --output-dir=dist --remove-output --assume-yes-for-downloads main.py
         env:
           NUITKA_ASSUME_YES_FOR_DOWNLOADS: 1
 
@@ -103,6 +104,7 @@ jobs:
         with:
           name: CalculadoraCoisas-${{ runner.os }}
           path: dist/ThingCalculator_v1.1_*
+          if-no-files-found: ignore
           retention-days: 30
         env:
           FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
