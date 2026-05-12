@@ -85,5 +85,5 @@ class App(tk.Tk):
         self.geometry(f"{width}x{height}+{x}+{y}")
 
         # Pré-carrega as cotações de moeda em segundo plano para
-        # evitar travamentos durante o uso do conversor de moeda.
+        # evitar travamentos durante o uso do conversor de moeda
         threading.Thread(target=_fetch_currency_rates, daemon=True).start()
