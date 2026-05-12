@@ -25,7 +25,7 @@ class DateSelector(ttk.Frame):
         # Configura a grade para o layout interno
         self.grid_columnconfigure(0, weight=1)
 
-        # Extrai kwargs específicos para widgets internos ou Calendar
+        # Extrai kwargs específicos para o campo de texto e para o widget Calendar
         entry_width = kwargs.pop("width", 12)
         self._date_pattern: str = kwargs.pop("date_pattern", "dd/mm/yyyy")
         self.calendar_kwargs = kwargs
@@ -34,6 +34,7 @@ class DateSelector(ttk.Frame):
         self.entry.grid(row=0, column=0, sticky="ew", padx=(0, 5))
         self.entry.bind("<Button-1>", self.show_calendar)
 
+        # Botão para abrir o calendário de seleção
         btn_cal = ttk.Button(
             self, text="▼", style="CDC.TButton", command=self.show_calendar
         )
@@ -46,6 +47,7 @@ class DateSelector(ttk.Frame):
 
         if date_str:
             try:
+                # Converte o padrão de data do widget para o formato utilizado pelo `datetime`
                 py_date_pattern = (
                     self._date_pattern.replace("dd", "%d")
                     .replace("mm", "%m")
@@ -67,7 +69,7 @@ class DateSelector(ttk.Frame):
         top.title("Selecione uma Data:     ")
         top.transient(self._app_toplevel)
 
-        # Centraliza a janela abaixo do campo de entrada
+        # Centraliza a janela de seleção logo abaixo do campo de entrada
         x = self.entry.winfo_rootx()
         y = self.entry.winfo_rooty() + self.entry.winfo_height()
         top.geometry(f"+{x}+{y}")
@@ -88,7 +90,7 @@ class DateSelector(ttk.Frame):
         cal.pack(padx=10, pady=10)
 
         def set_date() -> None:
-            """Define a data no seletor e fecha a janela."""
+            """Define a data selecionada no campo e fecha a janela."""
             self.data_var.set(cal.get_date())
             top.destroy()
 

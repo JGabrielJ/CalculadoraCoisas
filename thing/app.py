@@ -12,18 +12,19 @@ class App(tk.Tk):
         """Janela principal da Calculadora de Coisas."""
         super().__init__(*args, **kwargs)
 
-        # Configuração da Janela Principal
+        # Configuração da janela principal
         self.title("Calculadora de Coisas")
         self.config(background="#FFFFFF")
 
+        # Define o ícone da aplicação a partir do arquivo especificado
         icon_img = PhotoImage(file=ICON_FILE)
         self.iconphoto(False, icon_img)
 
-        # Layout Principal (Notebook)
+        # Configura a grade principal para que o notebook ocupe toda a janela
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        # Configuração de Estilos do App (Notebook)
+        # Configuração de estilos do app (notebook)
         style = ttk.Style()
         style.theme_use("clam")
 
@@ -41,7 +42,7 @@ class App(tk.Tk):
             ],
         )
 
-        # Configuração dos Botões
+        # Configuração dos botões
         style.configure(
             "CDC.TButton", font=("Helvetica", 10, "bold"), focuscolor="none"
         )
@@ -53,21 +54,21 @@ class App(tk.Tk):
         )
         style.configure("CDC.TRadiobutton", font=("Helvetica", 10), focuscolor="none")
 
-        # Configuração dos Labels
+        # Configuração dos labels
         style.configure("PRG.TLabel", font=("Bahnschrift", 12))
         style.configure("TTL.TLabel", font=("Bahnschrift", 24, "bold"))
         style.configure("NUM.TLabel", font=("Cambria_Math", 32))
 
-        # Criação do Notebook (abas)
+        # Cria o notebook (abas) e o posiciona na janela principal
         notebook = ttk.Notebook(self, style="CDC.TNotebook")
         notebook.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
 
-        # Criação dos frames para cada aba
+        # Cria cada aba do aplicativo como um frame separado
         calculator_frame = Calculator(notebook, self)
         converter_frame = Converter(notebook, self)
         datecalc_frame = DateCalc(notebook, self)
 
-        # Adiciona os frames como abas no Notebook
+        # Adiciona os frames ao notebook com seus rótulos de aba
         notebook.add(calculator_frame, text="Calculadora")
         notebook.add(converter_frame, text="Conversor")
         notebook.add(datecalc_frame, text="Cálculo de Data")
@@ -83,5 +84,6 @@ class App(tk.Tk):
 
         self.geometry(f"{width}x{height}+{x}+{y}")
 
-        # Pré-carrega as cotações de moeda em segundo plano para evitar travamentos
+        # Pré-carrega as cotações de moeda em segundo plano para
+        # evitar travamentos durante o uso do conversor de moeda.
         threading.Thread(target=_fetch_currency_rates, daemon=True).start()

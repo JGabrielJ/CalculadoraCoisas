@@ -4,9 +4,13 @@
 ![Created at](https://img.shields.io/github/created-at/JGabrielJ/CalculadoraCoisas?style=plastic)
 ![Last commit](https://img.shields.io/github/last-commit/JGabrielJ/CalculadoraCoisas?display_timestamp=committer&style=plastic)
 ![Activity](https://img.shields.io/github/commit-activity/m/JGabrielJ/CalculadoraCoisas?style=plastic)
+![Release](https://img.shields.io/github/v/release/JGabrielJ/CalculadoraCoisas?sort=date&display_name=release&style=plastic)
+![Release date](https://img.shields.io/github/release-date/JGabrielJ/CalculadoraCoisas?display_date=published_at&style=plastic)
 ![Repo size](https://img.shields.io/github/repo-size/JGabrielJ/CalculadoraCoisas?style=plastic)
-![Stars](https://img.shields.io/github/stars/JGabrielJ/CalculadoraCoisas?style=plastic)
 ![Forks](https://img.shields.io/github/forks/JGabrielJ/CalculadoraCoisas?style=plastic)
+![Stars](https://img.shields.io/github/stars/JGabrielJ/CalculadoraCoisas?style=plastic)
+![Watchers](https://img.shields.io/github/watchers/JGabrielJ/CalculadoraCoisas?style=plastic)
+![Contributors](https://img.shields.io/github/contributors/JGabrielJ/CalculadoraCoisas?style=plastic)
 ![Top language](https://img.shields.io/github/languages/top/JGabrielJ/CalculadoraCoisas?style=plastic&labelColor=blue&color=yellow)
 
 ## Visão geral

@@ -13,6 +13,7 @@ def format_number(number_str: str) -> str:
     if number_str in ("Erro", "N/A", "∞"):
         return number_str
 
+    # Mantém a notação científica como está, apenas troca o ponto decimal
     if "e" in number_str.lower():
         return number_str.replace(".", ",")
 
@@ -52,4 +53,5 @@ def unformat_number(formatted_str: str) -> str:
     if "e" in formatted_str.lower():
         return formatted_str.replace(",", ".")
 
+    # Remove separadores de milhar e converte vírgula decimal para ponto
     return formatted_str.replace(".", "").replace(",", ".")

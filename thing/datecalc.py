@@ -15,16 +15,16 @@ class DateCalc(ttk.Frame):
         """
         super().__init__(parent)
 
-        # Configuração do Grid
+        # Configuração do grid
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(3, weight=1)
 
-        # Título do Frame (Cálculo de Data)
+        # Título do frame (cálculo de data)
         ttk.Label(
             self, text="Cálculo de Datas", style="TTL.TLabel", anchor="center"
         ).grid(row=0, column=0, sticky="nsew", pady=15)
 
-        # Seleção de Modo (Botões de Rádio)
+        # Seleção de modo (radio buttons)
         mode_frame = ttk.Frame(self)
         mode_frame.grid(row=1, column=0, sticky="ns", pady=(5, 15))
         self.mode_var = tk.StringVar(value="diff")
@@ -47,13 +47,13 @@ class DateCalc(ttk.Frame):
             command=self.__update_layout,
         ).grid(row=0, column=1, padx=10, sticky="e")
 
-        # Frame 1: Diferença entre Datas
+        # Frame 1: diferença entre datas
         self.diff_frame = ttk.LabelFrame(
             self, text=" Calcular a Diferença ", labelanchor="nw", padding=(5, 10)
         )
         self.diff_frame.grid_columnconfigure(1, weight=1)
 
-        # Widgets da Opção de Cálculo 1
+        # Widgets da opção de cálculo 1
         ttk.Label(self.diff_frame, text="Data Inicial:", style="PRG.TLabel").grid(
             row=0, column=0, padx=5, pady=5, sticky="e"
         )
@@ -102,7 +102,7 @@ class DateCalc(ttk.Frame):
             self.diff_frame, textvariable=self.diff_result_var, style="PRG.TLabel"
         ).grid(row=3, column=0, columnspan=2, pady=5)
 
-        # Frame 2: Adicionar/Subtrair Data
+        # Frame 2: adicionar/subtrair data
         self.add_frame = ttk.LabelFrame(
             self,
             text=" Adicionar ou Subtrair de uma Data ",
@@ -111,7 +111,7 @@ class DateCalc(ttk.Frame):
         )
         self.add_frame.grid_columnconfigure(1, weight=1)
 
-        # Widgets da Opção de Cálculo 2
+        # Widgets da opção de cálculo 2
         ttk.Label(self.add_frame, text="Data de Partida:", style="PRG.TLabel").grid(
             row=0, column=0, padx=5, pady=5, sticky="e"
         )
@@ -130,7 +130,7 @@ class DateCalc(ttk.Frame):
         )
         self.base_date_entry.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-        # Inputs para Dias, Meses e Anos (respectivamente)
+        # Inputs para dias, meses e anos (respectivamente)
         time_units_frame = ttk.Frame(self.add_frame)
         time_units_frame.grid(row=1, column=0, columnspan=2, pady=5)
         time_units_frame.grid_columnconfigure((0, 1, 2, 3, 4, 5), weight=1)
@@ -188,9 +188,11 @@ class DateCalc(ttk.Frame):
         mode = self.mode_var.get()
 
         if mode == "diff":
+            # Exibe o painel de diferença entre datas
             self.add_frame.grid_forget()
             self.diff_frame.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
         elif mode == "adsb":
+            # Exibe o painel de adição/subtração de datas
             self.diff_frame.grid_forget()
             self.add_frame.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
 
@@ -201,6 +203,7 @@ class DateCalc(ttk.Frame):
             end_date = self.end_date_entry.get_date()
 
             if start_date and end_date:
+                # Calcula a diferença entre as duas datas utilizando `relativedelta`
                 delta = relativedelta(end_date, start_date)
                 result_str = f"Diferença: {delta.years} anos, {delta.months} meses e {delta.days} dias."
                 self.diff_result_var.set(result_str)
@@ -226,6 +229,7 @@ class DateCalc(ttk.Frame):
             years = int(self.years_spinbox.get())
 
             if base_date:  # Garante que a data base foi selecionada
+                # Cria um deslocamento de tempo e aplica ao valor base
                 delta = relativedelta(days=days, months=months, years=years)
                 new_date = base_date + delta if add else base_date - delta
                 self.add_result_var.set(f"Nova data: {new_date.strftime('%d/%m/%Y')}")

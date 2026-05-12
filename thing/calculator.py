@@ -16,23 +16,23 @@ class Calculator(ttk.Frame):
         """
         super().__init__(parent)
 
-        # Configuração do Grid
+        # Configuração do grid
         for c in range(5):
             self.grid_columnconfigure(c, weight=1)
         for r in range(8):
             self.grid_rowconfigure(r, weight=1)
 
-        # Variáveis de Estado
+        # Variáveis de estado
         self.max_digits: int = 19
         self.is_result: bool = False
         self.equation_var = tk.StringVar(value="0")
 
-        # Título do Frame (Calculadora)
+        # Título do frame (calculadora)
         ttk.Label(
             self, text="Calculadora de Coisas", style="TTL.TLabel", anchor="center"
         ).grid(row=0, column=0, columnspan=5, sticky="nsew", pady=15)
 
-        # Display das Equações e Resultados
+        # Display das equações e resultados
         ttk.Label(
             self,
             textvariable=self.equation_var,
@@ -41,7 +41,7 @@ class Calculator(ttk.Frame):
             background="#C3EBEB",
         ).grid(row=1, column=0, columnspan=5, sticky="nsew", padx=8, pady=(0, 15))
 
-        # Lista de Botões da Calculadora
+        # Lista de botões da calculadora
         buttons: list[tuple] = [
             ("C", 2, 0),
             ("sin", 2, 1),
@@ -76,6 +76,7 @@ class Calculator(ttk.Frame):
         ]
 
         for text, row, column in buttons:
+            # Cria os botões e associa cada um ao método de clique
             ttk.Button(
                 self,
                 text=text,
@@ -175,33 +176,35 @@ class Calculator(ttk.Frame):
         try:
             expression = unformat_number(self.equation_var.get())
 
-            # Remove operadores finais consecutivos para resolver expressões como "1+2+"
+            # Remove operadores finais para evitar falha em expressões incompletas
             expression = re.sub(r"[+\-×÷^]+$", "", expression)
 
-            # Substitui os símbolos visuais por operadores/funções do Python
+            # Converte símbolos da interface para operadores Python válidos
             expression = expression.replace("×", "*")
             expression = expression.replace("÷", "/")
             expression = expression.replace("^", "**")
             expression = expression.replace("π", "math.pi")
 
-            # Adiciona multiplicação implícita para π
+            # Insere multiplicação implícita entre números e `π`
             expression = re.sub(r"(\d+)(math\.pi)", r"\1*\2", expression)
             expression = re.sub(r"(math\.pi)(\d+)", r"\1*\2", expression)
 
-            # Adiciona multiplicação implícita para parênteses
+            # Insere multiplicação implícita entre número/fechamento de parêntese e parêntese aberto
             expression = re.sub(r"(\d+|\))\(", r"\1*(", expression)
 
-            # Filtro de segurança que garante que a expressão contenha apenas caracteres permitidos
+            # Bloqueia caracteres não permitidos antes de executar `eval()` seguro
             if not re.match(r"^[0-9+\-*/().\s,a-z_]+$", expression):
                 raise ValueError("Caracteres inválidos na expressão!!!")
 
-            # Executa `eval()` em um ambiente seguro para prevenir a execução de código malicioso
+            # Executa a expressão em um ambiente seguro, limitando acesso ao builtins
             safe_env = {"math": math, "abs": abs, "__builtins__": {}}
             result = eval(expression, safe_env)
 
             # Formata o resultado para remover `.0` de números inteiros
             if result == int(result):
                 result = int(result)
+
+            # Atualiza o display com o resultado formatado e marca o estado como resultado
             self.equation_var.set(format_number(str(result)))
             self.is_result = True
 

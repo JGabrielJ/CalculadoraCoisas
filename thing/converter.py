@@ -15,13 +15,13 @@ class Converter(ttk.Frame):
         """
         super().__init__(parent)
 
-        # Configuração do Grid
+        # Configuração do grid
         for c in range(3):
             self.grid_columnconfigure(c, weight=1)
         for r in range(11):
             self.grid_rowconfigure(r, weight=1)
 
-        # Variáveis de Estado
+        # Variáveis de estado
         self.max_digits: int = 16
         self.input_unit_var = tk.StringVar()
         self.output_unit_var = tk.StringVar()
@@ -29,11 +29,11 @@ class Converter(ttk.Frame):
         self.output_value_var = tk.StringVar(value="0")
         self.option_var = tk.StringVar(value="Contagem")
 
-        # Configuração das Listas de Seleção
+        # Configuração das listas de seleção
         self.option_add("*TCombobox*font", ("Consolas", 10))
         self.option_add("*TCombobox*Listbox.font", ("Consolas", 10))
 
-        # Título do Frame (Conversor)
+        # Título do frame (conversor)
         ttk.Label(
             self, text="Conversor de Coisas", style="TTL.TLabel", anchor="center"
         ).grid(row=0, column=0, columnspan=3, sticky="nsew", pady=15)
@@ -49,7 +49,7 @@ class Converter(ttk.Frame):
             row=1, column=0, columnspan=3, sticky="nsew", padx=100, pady=(0, 5)
         )
 
-        # Labels e Menus de Unidade (Entrada)
+        # Labels e menus de unidade (input)
         ttk.Label(
             self, textvariable=self.input_value_var, anchor="w", style="NUM.TLabel"
         ).grid(row=2, column=0, columnspan=3, padx=8, sticky="nsew")
@@ -66,7 +66,7 @@ class Converter(ttk.Frame):
         )
         self.input_menu.grid(row=3, column=1, columnspan=2, padx=8, sticky="nsew")
 
-        # Labels e Menus de Unidade (Saída)
+        # Labels e menus de unidade (output)
         ttk.Label(
             self, textvariable=self.output_value_var, anchor="w", style="NUM.TLabel"
         ).grid(row=4, column=0, columnspan=3, padx=8, sticky="nsew")
@@ -85,11 +85,11 @@ class Converter(ttk.Frame):
             row=5, column=1, columnspan=2, padx=8, pady=(0, 20), sticky="nsew"
         )
 
-        # Inicialização dos Menus de Unidade
+        # Inicialização dos menus de unidade
         self.__change_menu()
         self.category_menu.bind("<<ComboboxSelected>>", self.__change_menu)
 
-        # Lista de Botões do Conversor
+        # Lista de botões do conversor
         buttons: list[tuple] = [
             ("", 6, 0),
             ("C", 6, 1),
@@ -128,19 +128,19 @@ class Converter(ttk.Frame):
     def __change_menu(self, event=None) -> None:
         """Atualiza as opções nos menus de unidade com base na categoria escolhida."""
 
-        # Reseta os valores ao trocar de categoria
+        # Reseta os valores ao trocar de categoria para evitar resultados inválidos
         self.__clear()
 
-        # Obtém a categoria selecionada
+        # Seleciona as unidades disponíveis para a categoria atual
         category = self.option_var.get()
         options = CONVERSION_OPTIONS.get(category, ())
 
-        # Atualiza os valores dos Comboboxes
+        # Atualiza os valores dos comboboxes
         self.input_menu["values"] = options
         self.output_menu["values"] = options
 
-        # Define a primeira opção da lista como o valor padrão
         if options:
+            # Define a primeira unidade como padrão ao trocar de categoria
             self.input_unit_var.set(options[0])
             self.output_unit_var.set(options[0])
 
@@ -154,6 +154,7 @@ class Converter(ttk.Frame):
             button = "."
 
         if button == "✓":
+            # Executa a conversão quando o botão de confirmação é pressionado
             input_val = self.input_value_var.get()
 
             if input_val == "∞":
@@ -177,6 +178,7 @@ class Converter(ttk.Frame):
         elif button == "⌫":
             self.__delete()
         elif not button:
+            # Insere o símbolo de infinito ao pressionar botão vazio
             self.input_value_var.set("∞")
         elif button:
             self.__append_digit(button)
@@ -203,8 +205,8 @@ class Converter(ttk.Frame):
         """
         current = unformat_number(self.input_value_var.get())
 
-        # Impede adicionar dígitos se for infinito
         if current == "∞":
+            # Não altera o valor quando já está em infinito
             return
 
         # Adiciona um dígito apenas se o limite não foi atingido

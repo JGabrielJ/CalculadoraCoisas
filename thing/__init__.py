@@ -6,11 +6,11 @@ import requests
 import time
 from datetime import timedelta
 
-# Arquivos do App
+# Diretório raiz da aplicação e caminho para o ícone utilizado na UI
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ICON_FILE = os.path.join(APP_DIR, "images", "favicon.png")
 
-# Opções do Menu de Conversão
+# Opções do Menu de Conversão agrupadas por categoria
 CONVERSION_OPTIONS = {
     "Ângulo": (
         "Grau",
@@ -231,7 +231,7 @@ CONVERSION_FACTORS = {
 }
 
 
-# Funções de Conversão com Fórmulas
+# Funções de conversão com fórmulas
 def _convert_angle(value: float, from_unit: str, to_unit: str) -> float:
     """Conversão entre as três unidades de ângulo.
 
@@ -246,7 +246,7 @@ def _convert_angle(value: float, from_unit: str, to_unit: str) -> float:
     if from_unit == to_unit:
         return value
 
-    # Converte para a base (Grau)
+    # Converte para a base (grau)
     degree = 0.0
     match from_unit:
         case "Grau":
@@ -385,6 +385,7 @@ def _convert_time(value: float, from_unit: str, to_unit: str) -> float:
 
 
 # Cache para cotações de moeda a fim de evitar chamadas excessivas à API
+# A cache é válida por 1 hora (60 minutos = 3600 segundos)
 _currency_cache = {"rates": None, "timestamp": 0, "ttl": 3600}
 
 
@@ -396,7 +397,7 @@ def _fetch_currency_rates() -> dict | None:
     """
     now = time.time()
 
-    # Verifica se o cache é recente e válido
+    # Verifica se a cache é recente e válido
     if _currency_cache["rates"] and (
         now - _currency_cache["timestamp"] < _currency_cache["ttl"]
     ):
@@ -427,7 +428,7 @@ def _fetch_currency_rates() -> dict | None:
         return None
 
     except (requests.exceptions.RequestException, ValueError, KeyError):
-        # Retorna o cache antigo se a API falhar, ou None se não houver cache
+        # Retorna a cache antiga se a API falhar, ou None se não houver cache
         return _currency_cache["rates"]
 
 
@@ -458,14 +459,14 @@ def _convert_currency(value: float, from_unit: str, to_unit: str) -> float:
         rate_from = rates[from_code]
         value_in_usd = value / rate_from
 
-        # Converte de USD para a moeda de destino.
+        # Converte de USD para a moeda de destino
         return value_in_usd * rates[to_code]
 
     except KeyError:
         return 0.0
 
 
-# Fatores de Lógica Específica
+# Fatores de lógica específica
 CONVERSION_LOGIC = {
     "Ângulo": _convert_angle,
     "Moeda": _convert_currency,
@@ -492,20 +493,21 @@ def convert(category: str, from_unit: str, to_unit: str, value: float) -> str:
 
         # Se a categoria possuir uma função de lógica específica...
         if category in CONVERSION_LOGIC:
+            # Categorias que exigem cálculo específico usam funções dedicadas
             val = str(int(value)) if category == "Numeração" else value
             result = CONVERSION_LOGIC[category](val, from_unit, to_unit)
 
-        # Se não, utilizando o sistema de fatores de conversão...
+        # Se a categoria usa fatores de conversão simples, aplica a fórmula de base
         elif category in CONVERSION_FACTORS:
             factors = CONVERSION_FACTORS[category]["unidades"]
             value_in_base = value * factors[from_unit]
             result = value_in_base / factors[to_unit]
 
-        # Se não, a categoria não tiver sido encontrada...
+        # Porém, caso a categoria não tenha sido encontrada...
         else:
             return "N/A"
 
-        # A categoria `Numeração` retorna uma string e não deve ser formatada.
+        # A categoria `Numeração` retorna uma string e não deve ser formatada
         if category == "Numeração":
             return str(result)
 
