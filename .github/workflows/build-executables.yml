@@ -137,9 +137,9 @@ jobs:
           draft: false
           prerelease: false
           tag_name: ${{ github.ref_name }}
-          name: "Calculadora de Coisas v${{ github.ref_name }}"
+          name: "Calculadora de Coisas ${{ github.ref_name }}"
           body: |
-            🔧 Correção de falhas na nova versão da Calculadora de Coisas (v${{ github.ref_name }})
+            🔧 Correção de falhas na nova versão da Calculadora de Coisas (${{ github.ref_name }})
 
             <br />
 
@@ -160,6 +160,5 @@ jobs:
             - macOS: *ThingCalculator_v1.1_macos_x64* (consulte o README para permissões)
 
             > Report bugs via GitHub Issues
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
